@@ -83,3 +83,15 @@
 - [x] Test true token expiry and first-consume/second-consume single-use behavior.
 - [x] Add HTTP-level coverage for bootstrap script and completion endpoint success/error responses.
 - [x] Re-review Bootstrap hardening TODO statuses after final verification.
+
+## Vercel and GitHub CLI redesign
+
+- [ ] Define a Vercel-compatible deployment architecture and document required environment variables and Cloudflare DNS prerequisites.
+- [ ] Add a public co08.art command/tutorial landing page explaining the install and usage flow.
+- [ ] Build a versioned installable co08 CLI package with `co08 ssh`, user ID authentication, configurable SSH user/port, and no local SSH execution by the web app.
+- [ ] Add a CLI bootstrap/token exchange flow that safely provisions a DNS hostname and returns the SSH connection command.
+- [ ] Add user management IDs with authenticated status, stop/revoke, and hostname regeneration controls.
+- [ ] Add support for generated hostnames such as `ip-899ac5a0.co08.art` while enforcing zone scope and collision safety.
+- [ ] Add password/credential guidance without storing or exposing plaintext VPS passwords; support user-provided SSH key/password setup instructions safely.
+- [ ] Add Vercel configuration, deployment documentation, and GitHub repository metadata.
+- [ ] Run tests and build, create a private GitHub repository, push the project, and provide the Vercel setup steps.
