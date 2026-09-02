@@ -7,4 +7,7 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN ?? "",
+  cloudflareZoneId: process.env.CLOUDFLARE_ZONE_ID ?? "",
+  domain: (process.env.DOMAIN ?? "co08.art").toLowerCase().replace(/\.$/, ""),
 };

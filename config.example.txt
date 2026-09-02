@@ -1,0 +1,7 @@
+CO08 / CONTROL server configuration example
+
+CLOUDFLARE_API_TOKEN=replace_with_zone_dns_edit_token
+CLOUDFLARE_ZONE_ID=replace_with_co08_art_zone_id
+DOMAIN=co08.art
+
+Store actual values in the project’s secure Secrets settings. Do not commit populated credentials.
