@@ -160,10 +160,10 @@
 
 ## Vercel handoff
 
-- [ ] Verify the linked Vercel project remains production-ready and connected to the public repository.
-- [ ] Verify the public deployment URL and health/bootstrap route availability.
-- [ ] Document the exact user-side steps to add co08.art and configure required Vercel secrets.
-- [ ] Re-run final validation and save a Vercel handoff checkpoint.
+- [x] Verify the linked Vercel project remains production-ready and connected to the public repository.
+- [x] Verify the public deployment URL and health/bootstrap route availability.
+- [x] Document the exact user-side steps to add co08.art and configure required Vercel secrets.
+- [x] Re-run final validation and save a Vercel handoff checkpoint.
 
 ## Vercel API release blocker
 
@@ -172,5 +172,5 @@
 
 ## Fresh Vercel verification
 
-- [ ] Push the `/health` rewrite and verify a fresh Vercel production deployment reaches READY.
-- [ ] Smoke-test live `/health`, `/api/health`, and a bootstrap API route after redeployment.
+- [x] Push the `/health` rewrite and verify a fresh Vercel production deployment reaches READY.
+- [x] Smoke-test live `/health`, `/api/health`, and a bootstrap API route after redeployment.
