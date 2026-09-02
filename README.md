@@ -86,6 +86,12 @@ Use a reverse proxy such as Nginx or Caddy to terminate HTTPS for `co08.art`, pr
 
 Confirm that the Cloudflare token is absent from browser bundles and JSON responses, that the token is restricted to DNS edits for the `co08.art` zone, and that every DNS create request includes `proxied: false`. Keep API keys hashed at rest, rotate and revoke keys when a VPS is retired, use HTTPS, retain audit logs, keep host quotas conservative, and avoid accepting arbitrary record names. The application’s DNS helper also rejects hostnames outside the configured domain.
 
+## GitHub, Vercel, and co08 CLI
+
+The private GitHub repository is available at https://github.com/replitprivet-dotcom/co08-ssh-hosts and is linked to the Vercel project `co08-ssh-hosts`. The current Vercel deployment is available at https://co08-ssh-hosts.vercel.app. To use `co08.art` as the public app and API domain, add `co08.art` as a custom domain in Vercel and create the DNS records Vercel displays. Keep the Cloudflare API zone credentials configured in Vercel Environment Variables; the DNS zone name and the app base URL are separate settings.
+
+For VPS users, install the CLI from a checked-out release with `python3 -m pip install ./cli`, then set `CO08_SERVER=https://co08.art` and `CO08_TOKEN` to the one-time token generated in the dashboard. Run `co08 ssh --user root --port 22` to request a hostname and receive output such as `ssh -p 22 root@ip-899ac5a0.co08.art`. Use `--user ubuntu` or another account when that is the account configured on the VPS. The CLI prints the connection command only; it never opens an SSH session or changes the VPS password.
+
 ## VPS one-command bootstrap
 
 From the authenticated dashboard, open **VPS quick setup** and generate a one-time command. Copy it to the target VPS and run it as a privileged user with `curl` available. The command only runs on the VPS: it detects the VPS public IPv4 through `api.ipify.org`, calls the bootstrap completion endpoint, creates a DNS-only A record under the configured domain, and prints the resulting SSH command. The bootstrap token is stored hashed, expires after 15 minutes, and can be consumed once. Never paste the command into an untrusted shell or share it; if it expires or is exposed, revoke/ignore it and issue a new one. If the request fails, verify outbound HTTPS, `curl`, the configured public IP, and Cloudflare status, then issue a fresh command.

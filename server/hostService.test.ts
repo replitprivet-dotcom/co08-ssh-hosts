@@ -10,7 +10,7 @@ describe("host security primitives", () => {
   });
   it("generates a scoped, non-IP hostname", () => {
     const hostname = generateHostname("co08.art");
-    expect(hostname).toMatch(/^vps-[a-f0-9]{8}\.co08\.art$/);
+    expect(hostname).toMatch(/^ip-[a-f0-9]{8}\.co08\.art$/);
     expect(hostname).not.toContain("208");
   });
   it("issues a secret that can only be represented by its hash", () => {

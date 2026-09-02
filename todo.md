@@ -86,12 +86,22 @@
 
 ## Vercel and GitHub CLI redesign
 
-- [ ] Define a Vercel-compatible deployment architecture and document required environment variables and Cloudflare DNS prerequisites.
-- [ ] Add a public co08.art command/tutorial landing page explaining the install and usage flow.
-- [ ] Build a versioned installable co08 CLI package with `co08 ssh`, user ID authentication, configurable SSH user/port, and no local SSH execution by the web app.
-- [ ] Add a CLI bootstrap/token exchange flow that safely provisions a DNS hostname and returns the SSH connection command.
+- [x] Define a Vercel-compatible deployment architecture and document required environment variables and Cloudflare DNS prerequisites.
+- [x] Add a public co08.art command/tutorial landing page explaining the install and usage flow.
+- [x] Build a versioned installable co08 CLI package with `co08 ssh`, user ID authentication, configurable SSH user/port, and no local SSH execution by the web app.
+- [x] Add a CLI bootstrap/token exchange flow that safely provisions a DNS hostname and returns the SSH connection command.
 - [ ] Add user management IDs with authenticated status, stop/revoke, and hostname regeneration controls.
-- [ ] Add support for generated hostnames such as `ip-899ac5a0.co08.art` while enforcing zone scope and collision safety.
-- [ ] Add password/credential guidance without storing or exposing plaintext VPS passwords; support user-provided SSH key/password setup instructions safely.
-- [ ] Add Vercel configuration, deployment documentation, and GitHub repository metadata.
-- [ ] Run tests and build, create a private GitHub repository, push the project, and provide the Vercel setup steps.
+- [x] Add support for generated hostnames such as `ip-899ac5a0.co08.art` while enforcing zone scope and collision safety.
+- [x] Add password/credential guidance without storing or exposing plaintext VPS passwords; support user-provided SSH key/password setup instructions safely.
+- [x] Add Vercel configuration, deployment documentation, and GitHub repository metadata.
+- [x] Run tests and build, create a private GitHub repository, push the project, and provide the Vercel setup steps.
+
+## Final Vercel and CLI corrections
+
+- [ ] Add a public frontend command/tutorial landing page and route.
+- [ ] Define the CLI identity model clearly: use one-time bootstrap token for provisioning and a separate management ID for later controls, with tests.
+- [ ] Change generated hostname format to `ip-<random>.co08.art` and update tests.
+- [ ] Add concrete SSH key/password setup guidance without storing plaintext credentials.
+- [ ] Commit and push every post-repository change to GitHub.
+- [ ] Add a Vercel-compatible serverless API entrypoint or explicitly document the supported adapter and validate deployed API endpoints.
+- [ ] Re-run tests, build, and review TODO completion before the next checkpoint.

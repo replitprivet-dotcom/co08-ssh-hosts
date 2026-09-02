@@ -6,17 +6,19 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import DashboardLayout from "./components/DashboardLayout";
+import PublicInstall from "./pages/PublicInstall";
 
 function Router() {
-  return <DashboardLayout><Switch>
-    <Route path="/" component={Home} />
-    <Route path="/hosts" component={Home} />
-    <Route path="/api-keys" component={Home} />
-    <Route path="/activity" component={Home} />
-    <Route path="/settings" component={Home} />
+  return <Switch>
+    <Route path="/" component={PublicInstall} />
+    <Route path="/dashboard" component={() => <DashboardLayout><Home /></DashboardLayout>} />
+    <Route path="/hosts" component={() => <DashboardLayout><Home /></DashboardLayout>} />
+    <Route path="/api-keys" component={() => <DashboardLayout><Home /></DashboardLayout>} />
+    <Route path="/activity" component={() => <DashboardLayout><Home /></DashboardLayout>} />
+    <Route path="/settings" component={() => <DashboardLayout><Home /></DashboardLayout>} />
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />
-  </Switch></DashboardLayout>;
+  </Switch>;
 }
 
 // NOTE: About Theme

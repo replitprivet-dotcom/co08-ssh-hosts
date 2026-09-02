@@ -11,7 +11,7 @@ export function isPublicIpv4(ip: string) {
   if (nums.some(n => n < 0 || n > 255)) return false;
   return !(nums[0] === 10 || nums[0] === 127 || (nums[0] === 169 && nums[1] === 254) || (nums[0] === 192 && nums[1] === 168) || (nums[0] === 172 && nums[1] >= 16 && nums[1] <= 31) || nums.every(n => n === 0) || nums[0] >= 224);
 }
-export function generateHostname(domain: string) { return `vps-${randomBytes(4).toString("hex")}.${domain}`.toLowerCase(); }
+export function generateHostname(domain: string) { return `ip-${randomBytes(4).toString("hex")}.${domain}`.toLowerCase(); }
 export function hashApiKey(key: string) { return createHash("sha256").update(key).digest("hex"); }
 export function issueApiKey() { const secret = `co08_${randomBytes(24).toString("base64url")}`; return { secret, prefix: secret.slice(0, 14), hash: hashApiKey(secret) }; }
 export function buildBootstrapCommand(baseUrl: string, secret: string) { const url = new URL(`/api/bootstrap/${secret}`, baseUrl); return `curl -fsSL ${url.toString()} | sudo bash`; }
