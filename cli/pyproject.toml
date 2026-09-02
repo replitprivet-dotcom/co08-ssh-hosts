@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "co08"
-version = "0.1.0"
+version = "0.2.0"
 description = "CO08 SSH hostname client"
 requires-python = ">=3.9"
 
