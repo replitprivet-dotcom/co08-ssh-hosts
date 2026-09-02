@@ -134,6 +134,6 @@
 
 ## Public CLI repository
 
-- [ ] Change the GitHub repository visibility from private to public at the user's request.
-- [ ] Verify anonymous repository access and the public pip install URL.
-- [ ] Confirm no secrets or environment files are tracked before delivering the public link.
+- [x] Change the GitHub repository visibility from private to public at the user's request.
+- [x] Verify anonymous repository access and the public pip install URL with a clean virtual-environment smoke test.
+- [x] Confirm no secrets or environment files are tracked before delivering the public link.
