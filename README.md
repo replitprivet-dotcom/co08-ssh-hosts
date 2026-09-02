@@ -88,7 +88,7 @@ Confirm that the Cloudflare token is absent from browser bundles and JSON respon
 
 ## GitHub, Vercel, and co08 CLI
 
-The private GitHub repository is available at https://github.com/replitprivet-dotcom/co08-ssh-hosts and is linked to the Vercel project `co08-ssh-hosts`. The current Vercel deployment is available at https://co08-ssh-hosts.vercel.app. To use `co08.art` as the public app and API domain, add `co08.art` as a custom domain in Vercel and create the DNS records Vercel displays. Keep the Cloudflare API zone credentials configured in Vercel Environment Variables; the DNS zone name and the app base URL are separate settings.
+The public GitHub repository is available at https://github.com/replitprivet-dotcom/co08-ssh-hosts.git and is linked to the Vercel project `co08-ssh-hosts`. The current Vercel deployment is available at https://co08-ssh-hosts.vercel.app. To use `co08.art` as the public app and API domain, add `co08.art` as a custom domain in Vercel and create the DNS records Vercel displays. Keep the Cloudflare API zone credentials configured in Vercel Environment Variables; the DNS zone name and the app base URL are separate settings.
 
 For VPS users, install the CLI from a checked-out release with `python3 -m pip install ./cli`, then set `CO08_SERVER=https://co08.art` and `CO08_TOKEN` to the one-time token generated in the dashboard. Run `co08 ssh --user root --port 22` to request a hostname and receive output such as `ssh -p 22 root@ip-899ac5a0.co08.art`. Use `--user ubuntu` or another account when that is the account configured on the VPS. The CLI prints the connection command only; it never opens an SSH session or changes the VPS password.
 

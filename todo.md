@@ -131,3 +131,9 @@
 
 - [x] Re-run `pnpm check && pnpm test && pnpm build` after GitHub commit 56172c0 and record the successful result.
 - [x] Complete the final TODO review after post-push validation.
+
+## Public CLI repository
+
+- [ ] Change the GitHub repository visibility from private to public at the user's request.
+- [ ] Verify anonymous repository access and the public pip install URL.
+- [ ] Confirm no secrets or environment files are tracked before delivering the public link.
