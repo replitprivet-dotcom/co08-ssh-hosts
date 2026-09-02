@@ -122,7 +122,12 @@
 
 ## Final release evidence
 
-- [ ] Assert `management_id` and `management_proof` in bootstrap completion tests.
-- [ ] Add explicit SSH public-key setup and temporary password-login warnings to README.md.
-- [ ] Commit and push the latest management, API, schema, UI, test, and documentation changes.
-- [ ] Re-run validation after the final push and complete the TODO review.
+- [x] Assert `management_id` and `management_proof` in bootstrap completion tests.
+- [x] Add explicit SSH public-key setup and temporary password-login warnings to README.md.
+- [x] Commit and push the latest management, API, schema, UI, test, and documentation changes.
+- [x] Re-run validation after the final push and complete the TODO review.
+
+## Post-push verification
+
+- [x] Re-run `pnpm check && pnpm test && pnpm build` after GitHub commit 56172c0 and record the successful result.
+- [x] Complete the final TODO review after post-push validation.
