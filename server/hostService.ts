@@ -1,7 +1,7 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { TRPCError } from "@trpc/server";
-import { addAuditLog, addDnsRecord, countHostsForApiKey, createBootstrapToken, createHost, consumeBootstrapToken, findApiKey, getDnsRecord, getHostById, hostExists, markDnsDeleted, markHost, renewHost, touchApiKey } from "./db";
-import { createARecord, deleteDnsRecord } from "./cloudflare";
+import { addAuditLog, addDnsRecord, countHostsForApiKey, createBootstrapToken, createHost, consumeBootstrapToken, findApiKey, getDnsRecord, getHostById, hostExists, markDnsDeleted, markHost, renewHost, touchApiKey } from "./db.js";
+import { createARecord, deleteDnsRecord } from "./cloudflare.js";
 import type { ApiKey } from "../drizzle/schema";
 
 export function isPublicIpv4(ip: string) {

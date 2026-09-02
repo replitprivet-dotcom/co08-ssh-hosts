@@ -1,7 +1,7 @@
 import { and, desc, eq, gt, isNull, lt, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { apiKeys, auditLogs, bootstrapTokens, dnsRecords, hosts, InsertUser, systemSettings, users } from "../drizzle/schema";
-import { ENV } from "./_core/env";
+import { apiKeys, auditLogs, bootstrapTokens, dnsRecords, hosts, InsertUser, systemSettings, users } from "../drizzle/schema.js";
+import { ENV } from "./_core/env.js";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
