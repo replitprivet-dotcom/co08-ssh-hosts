@@ -3,5 +3,5 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "dist/public",
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/$1" }]
+  "rewrites": [{ "source": "/health", "destination": "/api/health" }, { "source": "/api/(.*)", "destination": "/api/$1" }]
 }

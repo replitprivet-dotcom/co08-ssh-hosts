@@ -137,3 +137,40 @@
 - [x] Change the GitHub repository visibility from private to public at the user's request.
 - [x] Verify anonymous repository access and the public pip install URL with a clean virtual-environment smoke test.
 - [x] Confirm no secrets or environment files are tracked before delivering the public link.
+
+## Vercel production and CLI login
+
+- [ ] Audit current Vercel project, deployment, domain, OAuth, and GitHub state.
+- [ ] Add `co08 login` CLI command that creates a short-lived random pairing URL and polls for completion without opening SSH or executing shell commands.
+- [ ] Add browser pairing page with GitHub/Google-compatible authentication path and one-time exchange protection.
+- [ ] Issue a user-scoped CLI credential after successful browser login with revocation and expiry controls.
+- [ ] Add easy automatic CLI onboarding and clear error/recovery states.
+- [ ] Configure or verify Vercel production deployment and attach co08.art if account/DNS permissions allow.
+- [ ] Request any mandatory GitHub/Google OAuth and production deployment secrets through the secure secret flow.
+- [ ] Add tests for pairing URL entropy, expiry, replay prevention, login completion, and credential revocation.
+- [ ] Run deployment validation, push final code to GitHub, and save a new checkpoint.
+
+## Selected login architecture
+
+- [ ] Use GitHub OAuth as the primary browser login provider with short-lived state and callback validation.
+- [ ] Add `co08 login` pairing flow that displays a random URL, polls securely, and receives a revocable user-scoped CLI credential.
+- [ ] Keep CLI credentials hashed at rest, scoped to the user, expiring/revocable, and never expose GitHub tokens to the CLI.
+- [ ] Add GitHub OAuth secret requirements and callback URL documentation for Vercel.
+- [ ] Add tests for OAuth state, pairing replay prevention, CLI credential issuance, and revocation.
+
+## Vercel handoff
+
+- [ ] Verify the linked Vercel project remains production-ready and connected to the public repository.
+- [ ] Verify the public deployment URL and health/bootstrap route availability.
+- [ ] Document the exact user-side steps to add co08.art and configure required Vercel secrets.
+- [ ] Re-run final validation and save a Vercel handoff checkpoint.
+
+## Vercel API release blocker
+
+- [x] Fix Vercel routing so `/health` and `/api/*` serverless functions are deployed and reachable.
+- [x] Redeploy and smoke-test the public health endpoint before calling Vercel production-ready; verified `/api/health` returns 200.
+
+## Fresh Vercel verification
+
+- [ ] Push the `/health` rewrite and verify a fresh Vercel production deployment reaches READY.
+- [ ] Smoke-test live `/health`, `/api/health`, and a bootstrap API route after redeployment.
