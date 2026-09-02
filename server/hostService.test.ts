@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authenticateApiKey, expirationFromSeconds, generateHostname, hashApiKey, isPublicIpv4, issueApiKey, rateLimitExceeded } from "./hostService";
+import { authenticateApiKey, expirationFromSeconds, generateHostname, hashApiKey, isPublicIpv4, issueApiKey, rateLimitExceeded, shouldExpireHost } from "./hostService";
 
 describe("host security primitives", () => {
   it("accepts public IPv4 and rejects private or malformed addresses", () => {
@@ -27,6 +27,13 @@ describe("host security primitives", () => {
     expect(rateLimitExceeded(new Date(now - 1000), 30, 30, now)).toBe(true);
     expect(rateLimitExceeded(new Date(now - 61000), 30, 30, now)).toBe(false);
     expect(rateLimitExceeded(null, 100, 30, now)).toBe(false);
+  });
+  it("selects only active hosts whose expiration has passed", () => {
+    const now = Date.now();
+    expect(shouldExpireHost("active", new Date(now - 1), now)).toBe(true);
+    expect(shouldExpireHost("active", new Date(now + 1000), now)).toBe(false);
+    expect(shouldExpireHost("deleted", new Date(now - 1), now)).toBe(false);
+    expect(shouldExpireHost("active", null, now)).toBe(false);
   });
   it("bounds expiration to one week and supports never", () => {
     expect(expirationFromSeconds(null)).toBeNull();

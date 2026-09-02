@@ -16,6 +16,8 @@ export function hashApiKey(key: string) { return createHash("sha256").update(key
 export function issueApiKey() { const secret = `co08_${randomBytes(24).toString("base64url")}`; return { secret, prefix: secret.slice(0, 14), hash: hashApiKey(secret) }; }
 export function expirationFromSeconds(seconds?: number | null) { return seconds && seconds > 0 ? new Date(Date.now() + Math.min(seconds, 604800) * 1000) : null; }
 export function rateLimitExceeded(lastRequestAt: Date | null | undefined, requestCount: number, limit: number, now = Date.now()) { return !!lastRequestAt && now - lastRequestAt.getTime() < 60000 && requestCount >= limit; }
+export function shouldExpireHost(status: string, expiresAt: Date | null | undefined, now = Date.now()) { return status === "active" && !!expiresAt && expiresAt.getTime() <= now; }
+export async function processExpiredHosts<T extends { id: number; hostname: string }>(rows: T[], actions: { removeDns: (row: T) => Promise<void>; markExpired: (row: T) => Promise<void>; audit: (row: T) => Promise<void> }) { for (const row of rows) { await actions.removeDns(row); await actions.markExpired(row); await actions.audit(row); } return rows.length; }
 
 export async function createManagedHost(input: { userId: number; ip: string; ttl: number; expiresAt: Date | null; apiKeyId?: number; requestIp?: string }) {
   if (!isPublicIpv4(input.ip)) throw new TRPCError({ code: "BAD_REQUEST", message: "Enter a valid public IPv4 address." });

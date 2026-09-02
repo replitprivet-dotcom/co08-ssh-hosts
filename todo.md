@@ -13,7 +13,7 @@
 - [x] Build the dark responsive dashboard shell with sidebar navigation and authenticated state handling.
 - [x] Build the overview dashboard with total, active, expired, expiring-soon, and API-request metrics plus recent activity.
 - [x] Build the Create SSH Host workflow with IPv4 validation, TTL, expiration, copyable hostname, and copyable SSH command.
-- [ ] Build the host management table with status, expiration, copy actions, renewal, and confirmed deletion.
+- [x] Build the host management table with status, expiration, copy actions, renewal, and confirmed deletion.
 - [x] Build API Keys management with create-once secret display, quota visibility, and revoke controls.
 - [x] Build Activity Logs and Settings pages with non-secret Cloudflare/domain connection status.
 - [x] Add responsive mobile navigation, accessibility states, and polished operational empty/loading/error states.
@@ -30,8 +30,8 @@
 - [x] Add ownership checks to host renewal and every id-based mutation.
 - [x] Add API-request metrics to the overview dashboard.
 - [x] Show a post-create result panel with copyable hostname and SSH command.
-- [ ] Convert host inventory to a true table, add copy-hostname action, and require confirmed deletion everywhere.
-- [ ] Add tests for API-key authentication and expiration cleanup behavior; rate-window behavior is covered.
+- [x] Convert host inventory to a true table, add copy-hostname action, and require confirmed deletion everywhere.
+- [x] Add tests for API-key authentication and expiration cleanup behavior; rate-window behavior is covered.
 - [x] Add a non-secret configuration example under a filename permitted by tooling.
 - [x] Re-review todo completion status before the final checkpoint.
 
@@ -39,5 +39,17 @@
 
 - [x] Increment and persist API-key request counters for every authenticated REST endpoint.
 - [x] Log authentication outcomes explicitly for missing, invalid, revoked, quota-rejected, and rate-limited API requests.
-- [ ] Add tests for API-key authentication and expiration cleanup behavior.
-- [ ] Re-review todo completion after the API security corrections are complete.
+- [x] Add tests for API-key authentication and expiration cleanup behavior.
+- [x] Re-review todo completion after the API security corrections are complete.
+
+## Strict finalization
+
+- [x] Replace the host inventory div grid with a real semantic HTML table containing Hostname, VPS IP, Created, Expires, Status, and Actions columns.
+- [x] Add comprehensive API-key outcome tests and an expiration-cleanup flow test.
+- [x] Re-review and update TODO completion only after strict finalization is complete.
+
+## Strict test coverage
+
+- [x] Add API-key authentication tests for invalid, revoked, quota-rejected, and rate-limited outcomes.
+- [x] Add an expiration-cleanup flow test that verifies expired hosts are marked and audited.
+- [x] Re-review and update TODO completion only after strict test coverage passes.
