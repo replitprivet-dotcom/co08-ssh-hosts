@@ -102,13 +102,27 @@
 - [x] Define the CLI identity model clearly: use one-time bootstrap token for provisioning and a separate management ID for later controls, with tests.
 - [x] Change generated hostname format to `ip-<random>.co08.art` and update tests.
 - [x] Add concrete SSH key/password setup guidance without storing plaintext credentials.
-- [ ] Commit and push every post-repository change to GitHub.
+- [x] Commit and push every post-repository change to GitHub.
 - [x] Add Vercel-compatible serverless API entrypoints for health and bootstrap exchange; validate the handlers with the project build and tests.
-- [ ] Re-run tests, build, and review TODO completion before the next checkpoint.
+- [x] Re-run tests, build, and review TODO completion before the next checkpoint.
 
 ## Final management security
 
-- [ ] Protect management status/stop/regenerate operations with a signed, expiring management proof rather than a bare identifier.
-- [ ] Add HTTP tests for management lookup, stop, regenerate, and CLI bootstrap-to-management identity flow.
-- [ ] Add explicit SSH public-key setup steps, optional password-login warning, and plaintext-secret handling guidance to the landing page and README.
-- [ ] Commit/push all changes, rerun validation, and complete the TODO review.
+- [x] Protect management status/stop/regenerate operations with a signed, expiring management proof rather than a bare identifier.
+- [x] Add HTTP tests for management lookup, stop, regenerate, and CLI bootstrap-to-management identity flow.
+- [x] Add explicit SSH public-key setup steps, optional password-login warning, and plaintext-secret handling guidance to the landing page and README.
+- [x] Commit/push all changes, rerun validation, and complete the TODO review.
+
+## Release evidence
+
+- [x] Add successful HTTP coverage for management lookup, stop, and regenerate plus bootstrap response to management proof flow.
+- [x] Mirror the explicit SSH key and password safety guidance in README.md.
+- [x] Commit and push all final changes to GitHub.
+- [x] Re-run validation after the final commit and complete the TODO review.
+
+## Final release evidence
+
+- [ ] Assert `management_id` and `management_proof` in bootstrap completion tests.
+- [ ] Add explicit SSH public-key setup and temporary password-login warnings to README.md.
+- [ ] Commit and push the latest management, API, schema, UI, test, and documentation changes.
+- [ ] Re-run validation after the final push and complete the TODO review.

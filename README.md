@@ -98,6 +98,12 @@ From the authenticated dashboard, open **VPS quick setup** and generate a one-ti
 
 The application never opens an SSH session, executes a shell command, installs packages, or runs code on the VPS. It only returns a script for the user to review and execute on their own machine.
 
+### SSH credentials and password safety
+
+For the recommended key-based setup, generate a key on your own workstation with `ssh-keygen -t ed25519 -C "co08-vps"`. Add the contents of the resulting `.pub` file to the VPS account’s `~/.ssh/authorized_keys` using your provider console or an existing trusted session, then connect with the printed hostname and the same SSH user. Keep the private key on your workstation, protect it with a passphrase, and never upload or paste it into CO08.
+
+Password login is optional and should be temporary. Set a strong, unique password directly through your VPS provider or a trusted console, never send it to this service, and disable `PasswordAuthentication` after the public key has been verified. CO08 stores neither VPS passwords nor private SSH keys; it only provisions DNS and returns connection metadata.
+
 ## Validation checklist
 
 Run `pnpm check` and `pnpm test`. In a configured environment, create a test hostname for `208.72.218.153`, inspect the Cloudflare record to confirm it is an `A` record with `proxied=false`, verify the hostname resolves directly to the IP, delete it from the dashboard, exercise API-key authentication and rate limits, renew a short-lived host, run the scheduled cleanup callback, and verify the responsive layout at desktop and mobile widths.
