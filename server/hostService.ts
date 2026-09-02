@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { TRPCError } from "@trpc/server";
 import { addAuditLog, addDnsRecord, countHostsForApiKey, createBootstrapToken, createHost, consumeBootstrapToken, findApiKey, getDnsRecord, getHostById, hostExists, markDnsDeleted, markHost, renewHost, touchApiKey } from "./db";
 import { createARecord, deleteDnsRecord } from "./cloudflare";
@@ -13,6 +13,8 @@ export function isPublicIpv4(ip: string) {
 }
 export function generateHostname(domain: string) { return `ip-${randomBytes(4).toString("hex")}.${domain}`.toLowerCase(); }
 export function hashApiKey(key: string) { return createHash("sha256").update(key).digest("hex"); }
+export function createManagementProof(managementId: string, ttlSeconds = 86400) { const exp = Math.floor(Date.now() / 1000) + ttlSeconds; const payload = `${managementId}.${exp}`; const sig = createHmac("sha256", process.env.JWT_SECRET || "co08-dev-secret").update(payload).digest("base64url"); return `${payload}.${sig}`; }
+export function verifyManagementProof(managementId: string, proof: string | undefined) { if (!proof) return false; const [id, expText, sig] = proof.split("."); if (id !== managementId || !expText || !sig || Number(expText) < Math.floor(Date.now() / 1000)) return false; const expected = createHmac("sha256", process.env.JWT_SECRET || "co08-dev-secret").update(`${id}.${expText}`).digest("base64url"); return sig.length === expected.length && timingSafeEqual(Buffer.from(sig), Buffer.from(expected)); }
 export function issueApiKey() { const secret = `co08_${randomBytes(24).toString("base64url")}`; return { secret, prefix: secret.slice(0, 14), hash: hashApiKey(secret) }; }
 export function buildBootstrapCommand(baseUrl: string, secret: string) { const url = new URL(`/api/bootstrap/${secret}`, baseUrl); return `curl -fsSL ${url.toString()} | sudo bash`; }
 export function renderBootstrapScript(baseUrl: string, secret: string) { return `#!/bin/sh\nset -eu\nIP=$(curl -4fsSL https://api.ipify.org)\nprintf 'Detected VPS IPv4: %s\\n' "$IP"\ncurl -fsSL -X POST ${new URL("/api/bootstrap/complete", baseUrl).toString()} -H 'content-type: application/json' --data '{"token":"${secret}","ip":"'"$IP"'"}'\nprintf '\\nBootstrap complete. Use the returned SSH command.\\n'\n`; }
@@ -33,11 +35,11 @@ export async function createManagedHost(input: { userId: number; ip: string; ttl
   if (!hostname) throw new TRPCError({ code: "CONFLICT", message: "Unable to allocate a unique hostname" });
   const record = await createARecord(hostname, input.ip, input.ttl);
   try {
-    const hostId = await createHost({ userId: input.userId, apiKeyId: input.apiKeyId, hostname, ip: input.ip, ttl: input.ttl, expiresAt: input.expiresAt, status: "active" });
+    const managementId = `u-${randomBytes(12).toString("base64url")}`; const hostId = await createHost({ userId: input.userId, apiKeyId: input.apiKeyId, hostname, managementId, ip: input.ip, ttl: input.ttl, expiresAt: input.expiresAt, status: "active" });
     await addDnsRecord({ hostId, cloudflareRecordId: record.id, recordType: "A", proxied: 0 });
     await addAuditLog({ userId: input.userId, apiKeyId: input.apiKeyId, action: "dns.create", resource: hostname, ip: input.requestIp, details: JSON.stringify({ recordId: record.id, target: input.ip, proxied: false }) });
     if (input.apiKeyId) await touchApiKey(input.apiKeyId);
-    return { id: hostId, hostname, ip: input.ip, sshCommand: `ssh root@${hostname}`, expiresAt: input.expiresAt, status: "active" as const };
+    return { id: hostId, managementId, managementProof: createManagementProof(managementId), hostname, ip: input.ip, sshCommand: `ssh root@${hostname}`, expiresAt: input.expiresAt, status: "active" as const };
   } catch (error) {
     await deleteDnsRecord(record.id).catch(() => undefined);
     throw error;

@@ -90,18 +90,25 @@
 - [x] Add a public co08.art command/tutorial landing page explaining the install and usage flow.
 - [x] Build a versioned installable co08 CLI package with `co08 ssh`, user ID authentication, configurable SSH user/port, and no local SSH execution by the web app.
 - [x] Add a CLI bootstrap/token exchange flow that safely provisions a DNS hostname and returns the SSH connection command.
-- [ ] Add user management IDs with authenticated status, stop/revoke, and hostname regeneration controls.
+- [x] Add user management IDs with authenticated status, stop/revoke, and hostname regeneration controls.
 - [x] Add support for generated hostnames such as `ip-899ac5a0.co08.art` while enforcing zone scope and collision safety.
 - [x] Add password/credential guidance without storing or exposing plaintext VPS passwords; support user-provided SSH key/password setup instructions safely.
 - [x] Add Vercel configuration, deployment documentation, and GitHub repository metadata.
-- [x] Run tests and build, create a private GitHub repository, push the project, and provide the Vercel setup steps.
+- [x] Run tests, build, create a private GitHub repository, push the project, and provide the Vercel setup steps.
 
 ## Final Vercel and CLI corrections
 
-- [ ] Add a public frontend command/tutorial landing page and route.
-- [ ] Define the CLI identity model clearly: use one-time bootstrap token for provisioning and a separate management ID for later controls, with tests.
-- [ ] Change generated hostname format to `ip-<random>.co08.art` and update tests.
-- [ ] Add concrete SSH key/password setup guidance without storing plaintext credentials.
+- [x] Add a public frontend command/tutorial landing page and route.
+- [x] Define the CLI identity model clearly: use one-time bootstrap token for provisioning and a separate management ID for later controls, with tests.
+- [x] Change generated hostname format to `ip-<random>.co08.art` and update tests.
+- [x] Add concrete SSH key/password setup guidance without storing plaintext credentials.
 - [ ] Commit and push every post-repository change to GitHub.
-- [ ] Add a Vercel-compatible serverless API entrypoint or explicitly document the supported adapter and validate deployed API endpoints.
+- [x] Add Vercel-compatible serverless API entrypoints for health and bootstrap exchange; validate the handlers with the project build and tests.
 - [ ] Re-run tests, build, and review TODO completion before the next checkpoint.
+
+## Final management security
+
+- [ ] Protect management status/stop/regenerate operations with a signed, expiring management proof rather than a bare identifier.
+- [ ] Add HTTP tests for management lookup, stop, regenerate, and CLI bootstrap-to-management identity flow.
+- [ ] Add explicit SSH public-key setup steps, optional password-login warning, and plaintext-secret handling guidance to the landing page and README.
+- [ ] Commit/push all changes, rerun validation, and complete the TODO review.

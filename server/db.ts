@@ -24,6 +24,7 @@ export async function getUserByOpenId(openId: string) { const db = await getDb()
 
 export async function listHosts(userId: number) { const db = await getDb(); if (!db) return []; return db.select().from(hosts).where(and(eq(hosts.userId, userId), or(eq(hosts.status, "active"), eq(hosts.status, "expired")))).orderBy(desc(hosts.createdAt)); }
 export async function getHost(userId: number, id: number) { const db = await getDb(); if (!db) return undefined; return (await db.select().from(hosts).where(and(eq(hosts.userId, userId), eq(hosts.id, id))).limit(1))[0]; }
+export async function getHostByManagementId(managementId: string) { const db = await getDb(); if (!db) return undefined; return (await db.select().from(hosts).where(eq(hosts.managementId, managementId)).limit(1))[0]; }
 export async function getHostById(id: number) { const db = await getDb(); if (!db) return undefined; return (await db.select().from(hosts).where(eq(hosts.id, id)).limit(1))[0]; }
 export async function hostExists(hostname: string) { const db = await getDb(); if (!db) return false; return (await db.select({ id: hosts.id }).from(hosts).where(eq(hosts.hostname, hostname)).limit(1)).length > 0; }
 export async function createHost(data: typeof hosts.$inferInsert) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(hosts).values(data); return Number(result[0].insertId); }

@@ -7,10 +7,12 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import DashboardLayout from "./components/DashboardLayout";
 import PublicInstall from "./pages/PublicInstall";
+import ManageHost from "./pages/ManageHost";
 
 function Router() {
   return <Switch>
     <Route path="/" component={PublicInstall} />
+    <Route path="/manage" component={ManageHost} />
     <Route path="/dashboard" component={() => <DashboardLayout><Home /></DashboardLayout>} />
     <Route path="/hosts" component={() => <DashboardLayout><Home /></DashboardLayout>} />
     <Route path="/api-keys" component={() => <DashboardLayout><Home /></DashboardLayout>} />

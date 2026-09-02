@@ -40,6 +40,7 @@ def main():
     print(f"Hostname: {host}")
     print(f"SSH: ssh -p {args.port} {args.user}@{host}")
     print(f"Management ID: {result.get('management_id', host)}")
+    print(f"Management proof: {result.get('management_proof', 'Use the proof returned by the dashboard')}")
     return 0
 
 

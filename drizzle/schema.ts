@@ -31,6 +31,7 @@ export const hosts = mysqlTable("hosts", {
   userId: int("userId").notNull(),
   apiKeyId: int("apiKeyId"),
   hostname: varchar("hostname", { length: 255 }).notNull().unique(),
+  managementId: varchar("managementId", { length: 40 }).notNull().unique(),
   ip: varchar("ip", { length: 45 }).notNull(),
   ttl: int("ttl").default(300).notNull(),
   expiresAt: timestamp("expiresAt"),
