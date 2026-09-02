@@ -21,5 +21,5 @@ describe("Cloudflare configuration", () => {
     expect(response.ok, body.errors?.[0]?.message || "Cloudflare request failed").toBe(true);
     expect(body.success).toBe(true);
     expect(body.result?.name).toBe(domain);
-  });
+  }, 15000);
 });

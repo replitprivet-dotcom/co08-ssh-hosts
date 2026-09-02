@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "crypto";
 import { TRPCError } from "@trpc/server";
-import { addAuditLog, addDnsRecord, countHostsForApiKey, createHost, findApiKey, getDnsRecord, getHostById, hostExists, markDnsDeleted, markHost, renewHost, touchApiKey } from "./db";
+import { addAuditLog, addDnsRecord, countHostsForApiKey, createBootstrapToken, createHost, consumeBootstrapToken, findApiKey, getDnsRecord, getHostById, hostExists, markDnsDeleted, markHost, renewHost, touchApiKey } from "./db";
 import { createARecord, deleteDnsRecord } from "./cloudflare";
 import type { ApiKey } from "../drizzle/schema";
 
@@ -14,6 +14,10 @@ export function isPublicIpv4(ip: string) {
 export function generateHostname(domain: string) { return `vps-${randomBytes(4).toString("hex")}.${domain}`.toLowerCase(); }
 export function hashApiKey(key: string) { return createHash("sha256").update(key).digest("hex"); }
 export function issueApiKey() { const secret = `co08_${randomBytes(24).toString("base64url")}`; return { secret, prefix: secret.slice(0, 14), hash: hashApiKey(secret) }; }
+export function buildBootstrapCommand(baseUrl: string, secret: string) { const url = new URL(`/api/bootstrap/${secret}`, baseUrl); return `curl -fsSL ${url.toString()} | sudo bash`; }
+export function renderBootstrapScript(baseUrl: string, secret: string) { return `#!/bin/sh\nset -eu\nIP=$(curl -4fsSL https://api.ipify.org)\nprintf 'Detected VPS IPv4: %s\\n' "$IP"\ncurl -fsSL -X POST ${new URL("/api/bootstrap/complete", baseUrl).toString()} -H 'content-type: application/json' --data '{"token":"${secret}","ip":"'"$IP"'"}'\nprintf '\\nBootstrap complete. Use the returned SSH command.\\n'\n`; }
+export async function issueBootstrapToken(userId: number, requestIp?: string) { const secret = `boot_${randomBytes(32).toString("base64url")}`; await createBootstrapToken({ userId, tokenHash: hashApiKey(secret), expiresAt: new Date(Date.now() + 15 * 60 * 1000) }); await addAuditLog({ userId, action: "bootstrap.issue", ip: requestIp, details: JSON.stringify({ ttlSeconds: 900 }) }); return secret; }
+export async function consumeBootstrapSecret(secret: string, requestIp?: string) { const token = await consumeBootstrapToken(hashApiKey(secret)); if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Bootstrap token is invalid, expired, or already used" }); await addAuditLog({ userId: token.userId, action: "bootstrap.consume", ip: requestIp }); return token; }
 export function expirationFromSeconds(seconds?: number | null) { return seconds && seconds > 0 ? new Date(Date.now() + Math.min(seconds, 604800) * 1000) : null; }
 export function rateLimitExceeded(lastRequestAt: Date | null | undefined, requestCount: number, limit: number, now = Date.now()) { return !!lastRequestAt && now - lastRequestAt.getTime() < 60000 && requestCount >= limit; }
 export function shouldExpireHost(status: string, expiresAt: Date | null | undefined, now = Date.now()) { return status === "active" && !!expiresAt && expiresAt.getTime() <= now; }

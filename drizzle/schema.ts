@@ -50,6 +50,15 @@ export const dnsRecords = mysqlTable("dns_records", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const bootstrapTokens = mysqlTable("bootstrap_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const systemSettings = mysqlTable("system_settings", {
   id: int("id").autoincrement().primaryKey(),
   key: varchar("key", { length: 80 }).notNull().unique(),
@@ -75,3 +84,4 @@ export type Host = typeof hosts.$inferSelect;
 export type DnsRecord = typeof dnsRecords.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type SystemSetting = typeof systemSettings.$inferSelect;
+export type BootstrapToken = typeof bootstrapTokens.$inferSelect;

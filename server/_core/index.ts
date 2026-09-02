@@ -10,8 +10,9 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { sdk } from "./sdk";
 import { deleteDnsRecord } from "../cloudflare";
+import { createBootstrapRouter } from "../bootstrapRoutes";
 import { addAuditLog, expireHosts, getDnsRecord, markDnsDeleted, markHost, renewHost, getHostById, touchApiKey } from "../db";
-import { authenticateApiKey, createManagedHost, expirationFromSeconds, processExpiredHosts } from "../hostService";
+import { authenticateApiKey, consumeBootstrapSecret, createManagedHost, expirationFromSeconds, processExpiredHosts, renderBootstrapScript } from "../hostService";
 
 function isPortAvailable(port: number): Promise<boolean> { return new Promise(resolve => { const server = net.createServer(); server.listen(port, () => server.close(() => resolve(true))); server.on("error", () => resolve(false)); }); }
 async function findAvailablePort(startPort = 3000) { for (let port = startPort; port < startPort + 20; port++) if (await isPortAvailable(port)) return port; throw new Error("No available port found"); }
@@ -22,6 +23,7 @@ async function startServer() {
   app.use(securityHeaders); app.use(express.json({ limit: "50kb" })); app.use(express.urlencoded({ limit: "50kb", extended: true }));
   registerStorageProxy(app); registerOAuthRoutes(app);
   app.get("/health", (_req, res) => res.json({ status: "ok" }));
+  app.use("/api/bootstrap", createBootstrapRouter());
   app.use("/api/v1", (req, res, next) => { res.on("finish", () => { addAuditLog({ action: "api.request", resource: `${req.method} ${req.path}`, ip: req.ip, details: JSON.stringify({ status: res.statusCode }) }).catch(() => undefined); }); next(); });
 
   app.post("/api/v1/hosts", async (req, res) => {

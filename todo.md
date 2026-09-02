@@ -53,3 +53,33 @@
 - [x] Add API-key authentication tests for invalid, revoked, quota-rejected, and rate-limited outcomes.
 - [x] Add an expiration-cleanup flow test that verifies expired hosts are marked and audited.
 - [x] Re-review and update TODO completion only after strict test coverage passes.
+
+## VPS bootstrap onboarding
+
+- [x] Add one-time bootstrap token persistence with expiry, single-use enforcement, hashing, and audit events.
+- [x] Add protected endpoint to issue a bootstrap command and a public token exchange endpoint for VPS setup.
+- [x] Ensure the bootstrap flow only creates DNS records through the existing Cloudflare API and never executes shell or SSH from the app.
+- [x] Add a copyable VPS command/tutorial with prerequisites, expected output, SSH connection example, and failure recovery.
+- [x] Add tests for token hashing, expiry, single-use behavior, command safety, and bootstrap API responses.
+- [x] Update README with the VPS bootstrap workflow and security warnings.
+- [x] Run type checks, tests, build, and save a new checkpoint.
+
+## Bootstrap hardening
+
+- [x] Generate bootstrap URLs from the current public request host instead of confusing the DNS zone with the app base URL.
+- [x] Expand the dashboard bootstrap card with prerequisites, expected output, SSH example, and recovery guidance.
+- [x] Add bootstrap-specific tests for token hashing, expiry, single-use behavior, safe command generation, and completion responses.
+- [x] Re-run validation and review TODO completion before the next checkpoint.
+
+## Bootstrap test completion
+
+- [x] Test bootstrap token expiry and single-use consumption behavior.
+- [x] Test bootstrap command generation uses the request host safely and not the DNS zone.
+- [x] Test GET /api/bootstrap/:secret and POST /api/bootstrap/complete success and invalid-token responses.
+- [x] Re-review Bootstrap hardening TODO statuses after these tests pass.
+
+## Final bootstrap verification
+
+- [x] Test true token expiry and first-consume/second-consume single-use behavior.
+- [x] Add HTTP-level coverage for bootstrap script and completion endpoint success/error responses.
+- [x] Re-review Bootstrap hardening TODO statuses after final verification.

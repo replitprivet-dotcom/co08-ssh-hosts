@@ -1,6 +1,6 @@
 import { and, desc, eq, gt, isNull, lt, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { apiKeys, auditLogs, dnsRecords, hosts, InsertUser, systemSettings, users } from "../drizzle/schema";
+import { apiKeys, auditLogs, bootstrapTokens, dnsRecords, hosts, InsertUser, systemSettings, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -43,6 +43,8 @@ export async function countHostsForApiKey(apiKeyId: number) { const db = await g
 export async function touchApiKey(id: number) { const db = await getDb(); if (!db) return; const key = (await db.select({ requestCount: apiKeys.requestCount, lastRequestAt: apiKeys.lastRequestAt }).from(apiKeys).where(eq(apiKeys.id, id)).limit(1))[0]; const reset = !key?.lastRequestAt || Date.now() - key.lastRequestAt.getTime() >= 60000; await db.update(apiKeys).set({ requestCount: reset ? 1 : sql`${apiKeys.requestCount} + 1`, lastRequestAt: new Date() }).where(eq(apiKeys.id, id)); }
 export async function expireHosts() { const db = await getDb(); if (!db) return []; const rows = await db.select().from(hosts).where(and(eq(hosts.status, "active"), lt(hosts.expiresAt, new Date()), sql`${hosts.expiresAt} IS NOT NULL`)); return rows; }
 export async function markDnsDeleted(hostId: number) { const db = await getDb(); if (!db) return; await db.update(dnsRecords).set({ deletedAt: new Date() }).where(eq(dnsRecords.hostId, hostId)); }
+export async function createBootstrapToken(data: typeof bootstrapTokens.$inferInsert) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(bootstrapTokens).values(data); return Number(result[0].insertId); }
+export async function consumeBootstrapToken(tokenHash: string) { const db = await getDb(); if (!db) return undefined; const result = await db.select().from(bootstrapTokens).where(and(eq(bootstrapTokens.tokenHash, tokenHash), isNull(bootstrapTokens.usedAt), gt(bootstrapTokens.expiresAt, new Date()))).limit(1); const row = result[0]; if (!row) return undefined; await db.update(bootstrapTokens).set({ usedAt: new Date() }).where(and(eq(bootstrapTokens.id, row.id), isNull(bootstrapTokens.usedAt))); return row; }
 export async function getSetting(key: string) { const db = await getDb(); if (!db) return undefined; return (await db.select().from(systemSettings).where(eq(systemSettings.key, key)).limit(1))[0]; }
 export async function setSetting(key: string, value: string) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.insert(systemSettings).values({ key, value }).onDuplicateKeyUpdate({ set: { value, updatedAt: new Date() } }); }
 

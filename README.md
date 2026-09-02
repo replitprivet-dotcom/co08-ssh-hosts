@@ -86,6 +86,12 @@ Use a reverse proxy such as Nginx or Caddy to terminate HTTPS for `co08.art`, pr
 
 Confirm that the Cloudflare token is absent from browser bundles and JSON responses, that the token is restricted to DNS edits for the `co08.art` zone, and that every DNS create request includes `proxied: false`. Keep API keys hashed at rest, rotate and revoke keys when a VPS is retired, use HTTPS, retain audit logs, keep host quotas conservative, and avoid accepting arbitrary record names. The application’s DNS helper also rejects hostnames outside the configured domain.
 
+## VPS one-command bootstrap
+
+From the authenticated dashboard, open **VPS quick setup** and generate a one-time command. Copy it to the target VPS and run it as a privileged user with `curl` available. The command only runs on the VPS: it detects the VPS public IPv4 through `api.ipify.org`, calls the bootstrap completion endpoint, creates a DNS-only A record under the configured domain, and prints the resulting SSH command. The bootstrap token is stored hashed, expires after 15 minutes, and can be consumed once. Never paste the command into an untrusted shell or share it; if it expires or is exposed, revoke/ignore it and issue a new one. If the request fails, verify outbound HTTPS, `curl`, the configured public IP, and Cloudflare status, then issue a fresh command.
+
+The application never opens an SSH session, executes a shell command, installs packages, or runs code on the VPS. It only returns a script for the user to review and execute on their own machine.
+
 ## Validation checklist
 
 Run `pnpm check` and `pnpm test`. In a configured environment, create a test hostname for `208.72.218.153`, inspect the Cloudflare record to confirm it is an `A` record with `proxied=false`, verify the hostname resolves directly to the IP, delete it from the dashboard, exercise API-key authentication and rate limits, renew a short-lived host, run the scheduled cleanup callback, and verify the responsive layout at desktop and mobile widths.

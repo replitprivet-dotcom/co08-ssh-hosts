@@ -7,7 +7,7 @@ import { addAuditLog, countHosts, createApiKey, getHost, listApiKeys, listAuditL
 import { parse as parseCookie } from "cookie";
 import { createHeartbeatJob } from "./_core/heartbeat";
 import { testCloudflareConnection } from "./cloudflare";
-import { createManagedHost, deleteManagedHost, expirationFromSeconds, issueApiKey } from "./hostService";
+import { buildBootstrapCommand, createManagedHost, deleteManagedHost, expirationFromSeconds, issueApiKey, issueBootstrapToken } from "./hostService";
 
 const ttlSchema = z.union([z.literal(300), z.literal(600), z.literal(3600)]).default(300);
 const expirationSchema = z.number().int().min(0).max(604800).nullable().optional();
@@ -31,6 +31,7 @@ export const appRouter = router({
     create: protectedProcedure.input(z.object({ name: z.string().trim().min(2).max(120), hostQuota: z.number().int().min(1).max(1000).default(25) })).mutation(async ({ ctx, input }) => { const issued = issueApiKey(); const id = await createApiKey({ userId: ctx.user.id, name: input.name, prefix: issued.prefix, keyHash: issued.hash, hostQuota: input.hostQuota, requestsPerMinute: 30 }); await addAuditLog({ userId: ctx.user.id, action: "api_key.create", resource: issued.prefix, ip: ctx.req.ip }); return { id, name: input.name, prefix: issued.prefix, secret: issued.secret }; }),
     revoke: protectedProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await revokeApiKey(ctx.user.id, input.id); await addAuditLog({ userId: ctx.user.id, action: "api_key.revoke", resource: String(input.id), ip: ctx.req.ip }); return { success: true }; }),
   }),
+  bootstrap: protectedProcedure.mutation(async ({ ctx }) => { const secret = await issueBootstrapToken(ctx.user.id, ctx.req.ip); const appBase = `${ctx.req.protocol}://${ctx.req.get("host")}`; return { secret, command: buildBootstrapCommand(appBase, secret) }; }),
   settings: router({
     cloudflareStatus: adminProcedure.query(async () => { try { return await testCloudflareConnection(); } catch (error) { return { connected: false, domain: process.env.DOMAIN || "co08.art", message: error instanceof Error ? error.message : "Connection failed" }; } }),
     scheduleCleanup: adminProcedure.mutation(async ({ ctx }) => { const session = parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""; const job = await createHeartbeatJob({ name: "cleanup-expired-hosts", cron: "0 0 * * * *", path: "/api/scheduled/cleanup-expired", description: "Delete expired co08.art DNS records" }, session); await setSetting("cleanup_heartbeat_task_uid", job.taskUid); await addAuditLog({ userId: ctx.user.id, action: "schedule.create", resource: job.taskUid, ip: ctx.req.ip }); return job; }),

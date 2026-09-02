@@ -29,6 +29,13 @@
       "when": 1788338078849,
       "tag": "0003_square_starjammers",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1788345989165,
+      "tag": "0004_breezy_ezekiel_stane",
+      "breakpoints": true
     }
   ]
 }
