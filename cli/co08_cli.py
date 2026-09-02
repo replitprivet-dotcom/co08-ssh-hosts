@@ -111,27 +111,19 @@ def ssh_command(host: dict[str, Any], user: str, port: int) -> str:
     return f"ssh -p {port} {user}@{host['hostname']}"
 
 
-def ssh(args: argparse.Namespace) -> int:
-    config = load_config()
-    server = server_for(args, config)
-    token = token_for(args, config)
-    if not 1 <= args.port <= 65535:
-        raise RuntimeError("--port must be between 1 and 65535")
+def detect_public_ip() -> str:
+    request = urllib.request.Request("https://api.ipify.org", headers={"accept": "text/plain"})
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            ip = response.read().decode().strip()
+    except Exception as exc:
+        raise RuntimeError(f"could not detect public VPS IPv4; pass --ip explicitly: {exc}") from exc
+    if not ip:
+        raise RuntimeError("public IP detection returned an empty value; pass --ip explicitly")
+    return ip
 
-    if not args.new:
-        result = request_json(server, "/api/v1/hosts", token=token)
-        hosts = result.get("hosts", [])
-        if not hosts:
-            print("No SSH hosts yet. Create one with: co08 ssh --new --ip PUBLIC_VPS_IP")
-            return 0
-        print("Your CO08 SSH hosts:")
-        for host in hosts:
-            print(f"  [{host.get('status', 'unknown')}] {ssh_command(host, args.user, args.port)}")
-            print(f"       id={host.get('id')} ip={host.get('ip')}")
-        return 0
 
-    if not args.ip:
-        raise RuntimeError("--ip is required for a new host; use the VPS public IPv4 address")
+def create_host(server: str, token: str, args: argparse.Namespace, ip: str) -> int:
     first = getpass.getpass("New SSH password (local confirmation only): ")
     second = getpass.getpass("Repeat SSH password: ")
     if first != second:
@@ -139,12 +131,35 @@ def ssh(args: argparse.Namespace) -> int:
     if not first:
         raise RuntimeError("password cannot be empty")
     del first, second
-    result = request_json(server, "/api/v1/hosts", token=token, payload={"ip": args.ip, "ttl": args.ttl, "expires_in": args.expires_in})
+    result = request_json(server, "/api/v1/hosts", token=token, payload={"ip": ip, "ttl": args.ttl, "expires_in": args.expires_in})
     if not result.get("success"):
         raise RuntimeError(result.get("error", "host creation failed"))
     print(f"Hostname: {result['hostname']}")
     print(f"SSH: ssh -p {args.port} {args.user}@{result['hostname']}")
     print("Password was not uploaded or stored by CO08. Configure it directly on the VPS.")
+    return 0
+
+
+def ssh(args: argparse.Namespace) -> int:
+    config = load_config()
+    server = server_for(args, config)
+    token = token_for(args, config)
+    if not 1 <= args.port <= 65535:
+        raise RuntimeError("--port must be between 1 and 65535")
+
+    result = request_json(server, "/api/v1/hosts", token=token)
+    hosts = result.get("hosts", [])
+    if not args.new and not args.ip and hosts:
+        print("Your CO08 SSH hosts:")
+        for host in hosts:
+            print(f"  [{host.get('status', 'unknown')}] {ssh_command(host, args.user, args.port)}")
+            print(f"       id={host.get('id')} ip={host.get('ip')}")
+        return 0
+
+    if args.new or args.ip or not hosts:
+        ip = args.ip or detect_public_ip()
+        return create_host(server, token, args, ip)
+
     return 0
 
 
@@ -160,11 +175,11 @@ def main() -> int:
     p_logout = sub.add_parser("logout", help="remove the locally saved token")
     p_logout.set_defaults(handler=logout)
 
-    p_ssh = sub.add_parser("ssh", help="list hosts, or create one with --new")
+    p_ssh = sub.add_parser("ssh", help="list hosts, or create the first/new host")
     p_ssh.add_argument("--server", default=None)
     p_ssh.add_argument("--token", default=None)
-    p_ssh.add_argument("--new", action="store_true", help="create a new DNS-only SSH hostname")
-    p_ssh.add_argument("--ip", default=None, help="public VPS IPv4 address")
+    p_ssh.add_argument("--new", action="store_true", help="force creation of a new DNS-only SSH hostname")
+    p_ssh.add_argument("--ip", default=None, help="public VPS IPv4; auto-detected when creating the first host")
     p_ssh.add_argument("--user", default="root")
     p_ssh.add_argument("--port", type=int, default=22)
     p_ssh.add_argument("--ttl", type=int, choices=(300, 600, 3600), default=300)
